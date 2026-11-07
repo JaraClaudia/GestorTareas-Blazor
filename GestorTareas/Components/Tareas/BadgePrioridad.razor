@@ -1,0 +1,14 @@
+﻿<span class="@Clase">@Prioridad</span>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Prioridad { get; set; } = string.Empty;
+
+    private string Clase => Prioridad switch
+    {
+        "Alta" => "prioridad-alta",
+        "Media" => "prioridad-media",
+        "Baja" => "prioridad-baja",
+        _ => ""
+    };
+}

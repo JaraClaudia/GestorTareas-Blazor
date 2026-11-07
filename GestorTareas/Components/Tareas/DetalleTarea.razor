@@ -1,0 +1,48 @@
+﻿@page "/tareas/{id:int}"
+@rendermode InteractiveServer
+@using GestorTareas.Models
+@using GestorTareas.Services
+@inject NavigationManager Navigation
+@inject ITareaService TareaService
+
+<h3>Detalle de Tarea</h3>
+
+@if (isLoading)
+{
+    <Cargando />
+}
+else if (tarea is null)
+{
+    <p>No se encontró la tarea con Id @Id.</p>
+}
+else
+{
+    <p><strong>Título:</strong> @tarea.Titulo</p>
+    <p><strong>Descripción:</strong> @tarea.Descripcion</p>
+    <p><strong>Categoría:</strong> @tarea.Categoria?.Nombre</p>
+    <p><strong>Prioridad:</strong> <BadgePrioridad Prioridad="@tarea.Prioridad" /></p>
+    <p><strong>Vencimiento:</strong> @tarea.FechaVencimiento?.ToString("dd/MM/yyyy")</p>
+    <p><strong>Completada:</strong> @(tarea.Completada ? "Sí" : "No")</p>
+}
+
+<button class="btn btn-secondary" @onclick="Volver">Volver a la lista</button>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private TareaEntity? tarea;
+    private bool isLoading = true;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        tarea = await TareaService.ObtenerPorId(Id);
+        isLoading = false;
+    }
+
+    private void Volver()
+    {
+        Navigation.NavigateTo("/tareas");
+    }
+}

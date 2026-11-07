@@ -1,0 +1,192 @@
+﻿@page "/tareas"
+@rendermode InteractiveServer
+@using GestorTareas.Models
+@using GestorTareas.Services
+@inject ITareaService TareaService
+
+<h3>Mis Tareas</h3>
+
+<AlertError Mensaje="@mensajeError" OnCerrar="CerrarError" />
+
+@if (estadisticas is not null)
+{
+    <div class="row g-2 mb-3 text-center">
+        <div class="col-6 col-md-3">
+            <div class="border rounded p-2"><strong>@estadisticas.Total</strong><br />Total</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="border rounded p-2"><strong>@estadisticas.Completadas</strong><br />Completadas</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="border rounded p-2"><strong>@estadisticas.Pendientes</strong><br />Pendientes</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="border rounded p-2"><strong>@Cantidad("Alta")</strong><br />Prioridad alta</div>
+        </div>
+    </div>
+}
+
+<FormularioTarea Tarea="nuevaTarea" Categorias="categorias"
+                 TextoBoton="Agregar" OnGuardar="AgregarTarea" />
+
+<div class="input-group mb-3">
+    <input class="form-control" placeholder="Buscar por título..."
+           @bind="textoBusqueda" @bind:event="oninput" @onkeydown="TeclaBusqueda" />
+    <button class="btn btn-outline-primary" @onclick="Buscar">Buscar</button>
+    <button class="btn btn-outline-secondary" @onclick="LimpiarBusqueda">Limpiar</button>
+</div>
+
+@if (isLoading)
+{
+    <Cargando Texto="Cargando tareas..." />
+}
+else if (!tareas.Any())
+{
+    <p class="text-muted">No se encontraron tareas.</p>
+}
+else
+{
+    @foreach (var tarea in tareas)
+    {
+        <TareaItem @key="tarea.Id" Tarea="tarea"
+                   OnEliminar="EliminarTarea" OnCompletar="CompletarTarea" />
+    }
+
+    <Paginacion PaginaActual="pagina" TotalPaginas="totalPaginas" OnCambio="CambiarPagina" />
+}
+
+@code {
+    private const int TamanioPagina = 5;
+
+    private List<TareaEntity> tareas = new();
+    private List<Categoria> categorias = new();
+    private EstadisticasTareas? estadisticas;
+    private TareaEntity nuevaTarea = NuevaTarea();
+
+    private bool isLoading = true;
+    private string? mensajeError;
+
+    private string textoBusqueda = string.Empty;
+    private string? filtroActivo;
+    private int pagina = 1;
+    private int totalPaginas;
+
+    private static TareaEntity NuevaTarea() =>
+        new() { FechaVencimiento = DateTime.Today.AddDays(1) };
+
+    private int Cantidad(string prioridad) =>
+        estadisticas is not null && estadisticas.PorPrioridad.TryGetValue(prioridad, out var n) ? n : 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            categorias = await TareaService.ObtenerCategorias();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"No se pudieron cargar las categorías: {ex.Message}";
+        }
+
+        await CargarTareas();
+    }
+
+    private async Task CargarTareas()
+    {
+        isLoading = true;
+        try
+        {
+            var resultado = await TareaService.ObtenerPaginado(pagina, TamanioPagina, filtroActivo);
+            tareas = resultado.Items;
+            totalPaginas = resultado.TotalPaginas;
+            estadisticas = await TareaService.ObtenerEstadisticas();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al cargar las tareas: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task AgregarTarea()
+    {
+        try
+        {
+            await TareaService.Crear(nuevaTarea);
+            nuevaTarea = NuevaTarea();
+            mensajeError = null;
+            pagina = 1;
+            await CargarTareas();
+        }
+        catch
+        {
+            mensajeError = "No se pudo guardar la tarea.";
+        }
+    }
+
+    private async Task CompletarTarea(int id)
+    {
+        try
+        {
+            await TareaService.ToggleCompletar(id);
+            await CargarTareas();
+        }
+        catch
+        {
+            mensajeError = "No se pudo actualizar la tarea.";
+        }
+    }
+
+    private async Task EliminarTarea(int id)
+    {
+        try
+        {
+            await TareaService.Eliminar(id);
+
+            if (tareas.Count == 1 && pagina > 1)
+            {
+                pagina--;
+            }
+
+            await CargarTareas();
+        }
+        catch
+        {
+            mensajeError = "No se pudo eliminar la tarea.";
+        }
+    }
+
+    private async Task Buscar()
+    {
+        filtroActivo = textoBusqueda.Trim();
+        pagina = 1;
+        await CargarTareas();
+    }
+
+    private async Task LimpiarBusqueda()
+    {
+        textoBusqueda = string.Empty;
+        filtroActivo = null;
+        pagina = 1;
+        await CargarTareas();
+    }
+
+    private async Task TeclaBusqueda(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Buscar();
+        }
+    }
+
+    private async Task CambiarPagina(int nuevaPagina)
+    {
+        pagina = nuevaPagina;
+        await CargarTareas();
+    }
+
+    private void CerrarError() => mensajeError = null;
+}

@@ -1,0 +1,73 @@
+﻿@page "/tareas/{id:int}/editar"
+@rendermode InteractiveServer
+@using GestorTareas.Models
+@using GestorTareas.Services
+@inject ITareaService TareaService
+@inject NavigationManager Navigation
+
+<h3>Editar tarea</h3>
+
+<AlertError Mensaje="@mensajeError" OnCerrar="CerrarError" />
+
+@if (isLoading)
+{
+    <Cargando />
+}
+else if (tarea is null)
+{
+    <p>No se encontró la tarea con Id @Id.</p>
+    <button class="btn btn-secondary" @onclick="Volver">Volver a la lista</button>
+}
+else
+{
+    <FormularioTarea Tarea="tarea" Categorias="categorias"
+                     TextoBoton="Guardar cambios" MostrarCompletada="true"
+                     OnGuardar="Guardar" OnCancelar="Volver" />
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private TareaEntity? tarea;
+    private List<Categoria> categorias = new();
+    private bool isLoading = true;
+    private string? mensajeError;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        isLoading = true;
+        try
+        {
+            tarea = await TareaService.ObtenerPorId(Id);
+            categorias = await TareaService.ObtenerCategorias();
+        }
+        catch (Exception ex)
+        {
+            mensajeError = $"Error al cargar la tarea: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (tarea is null) return;
+
+        try
+        {
+            await TareaService.Actualizar(tarea);
+            Navigation.NavigateTo("/tareas");
+        }
+        catch
+        {
+            mensajeError = "No se pudieron guardar los cambios.";
+        }
+    }
+
+    private void Volver() => Navigation.NavigateTo("/tareas");
+
+    private void CerrarError() => mensajeError = null;
+}

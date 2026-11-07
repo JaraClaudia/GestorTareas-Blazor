@@ -1,0 +1,35 @@
+﻿@if (TotalPaginas > 1)
+{
+    <nav aria-label="Paginación de tareas">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(PaginaActual <= 1 ? "disabled" : "")">
+                <button class="page-link" disabled="@(PaginaActual <= 1)"
+                        @onclick="() => Cambiar(PaginaActual - 1)">
+                    &laquo; Anterior
+                </button>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Página @PaginaActual de @TotalPaginas</span>
+            </li>
+            <li class="page-item @(PaginaActual >= TotalPaginas ? "disabled" : "")">
+                <button class="page-link" disabled="@(PaginaActual >= TotalPaginas)"
+                        @onclick="() => Cambiar(PaginaActual + 1)">
+                    Siguiente &raquo;
+                </button>
+            </li>
+        </ul>
+    </nav>
+}
+
+@code {
+    [Parameter]
+    public int PaginaActual { get; set; }
+
+    [Parameter]
+    public int TotalPaginas { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnCambio { get; set; }
+
+    private Task Cambiar(int pagina) => OnCambio.InvokeAsync(pagina);
+}

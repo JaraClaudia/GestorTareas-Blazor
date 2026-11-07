@@ -1,0 +1,12 @@
+﻿.prioridad-alta {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.prioridad-media {
+    color: #fd7e14;
+}
+
+.prioridad-baja {
+    color: #198754;
+}

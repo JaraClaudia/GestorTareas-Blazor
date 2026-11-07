@@ -1,0 +1,17 @@
+﻿@if (!string.IsNullOrEmpty(Mensaje))
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        @Mensaje
+        <button type="button" class="btn-close" aria-label="Cerrar" @onclick="Cerrar"></button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? Mensaje { get; set; }
+
+    [Parameter]
+    public EventCallback OnCerrar { get; set; }
+
+    private Task Cerrar() => OnCerrar.InvokeAsync();
+}
