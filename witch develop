@@ -1,0 +1,21 @@
+*   [33m7a9ce50[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mdevelop[m[33m, [m[1;31morigin/develop[m[33m)[m Merge pull request #10 from JaraClaudia/feature/xml-docs
+[31m|[m[32m\[m  
+[31m|[m * [33m0480917[m docs(services): documenta ITareaService con comentarios XML
+[31m|[m[31m/[m  
+*   [33m224dab7[m Merge pull request #9 from JaraClaudia/feature/readme
+[33m|[m[34m\[m  
+[33m|[m * [33m13b2c3b[m docs: agrega README profesional con arquitectura y capturas
+[33m|[m[33m/[m  
+*   [33m2409f86[m Merge pull request #8 from JaraClaudia/feature/ordenar-historias
+[35m|[m[36m\[m  
+[35m|[m * [33m8b16591[m docs: mueve historias de usuario a docs/ en formato markdown
+[35m|[m[35m/[m  
+*   [33m0ff932f[m Merge pull request #7 from JaraClaudia/feature/historias-de-usuario
+[1;31m|[m[1;32m\[m  
+[1;31m|[m * [33m84f7707[m docs: agrega historias de usuario del proyecto
+[1;31m|[m[1;31m/[m  
+*   [33m4f5ea2e[m Merge pull request #1 from JaraClaudia/feature/validaciones-avanzadas
+[1;33m|[m[1;34m\[m  
+[1;33m|[m * [33m26323f0[m docs(validaciones): documenta FechaFuturaAttribute
+[1;33m|[m[1;33m/[m  
+* [33m4ce33a1[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m feat: proyecto Blazor inicial (U1-U3)
