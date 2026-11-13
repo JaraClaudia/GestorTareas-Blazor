@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace GestorTareas.Models
 {
+    /// <summary>
+    /// Valida que la fecha ingresada no sea anterior a hoy.
+    /// </summary>
     public class FechaFuturaAttribute :ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
