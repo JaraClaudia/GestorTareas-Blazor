@@ -11,6 +11,11 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContextFactory<TareasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<ITareaService, TareaService>();
+
+// NUEVO: registra el health check de la base de datos
+builder.Services.AddHealthChecks()
+    .AddCheck<BaseDeDatosHealthCheck>("base-de-datos");
+
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -30,6 +35,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+// NUEVO: publica el endpoint /health
+app.MapHealthChecks("/health");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
