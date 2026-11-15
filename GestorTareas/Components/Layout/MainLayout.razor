@@ -1,18 +1,22 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
+    <aside class="sidebar">
         <NavMenu />
-    </div>
+    </aside>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+        <header class="top-row px-4">
+            <span class="fw-semibold">Gestor de Tareas</span>
+        </header>
 
         <article class="content px-4">
             @Body
         </article>
+
+        <footer class="px-4 py-3 text-muted small">
+            <p class="mb-0">Gestor de Tareas &copy; @DateTime.Now.Year</p>
+        </footer>
     </main>
 </div>
 
