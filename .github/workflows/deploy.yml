@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar dependencias
+        run: dotnet restore
+
+      - name: Publicar
+        run: dotnet publish GestorTareas/GestorTareas.csproj -c Release -o ./publish
+
+      - name: Desplegar con Web Deploy
+        shell: pwsh
+        env:
+          WD_SERVER: ${{ secrets.PUBLISHURL }}
+          WD_SITE: ${{ secrets.MSDEPLOYSITE }}
+          WD_USER: ${{ secrets.USERNAME }}
+          WD_PASSWORD: ${{ secrets.USERPWD }}
+        run: |
+          $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          if (-not (Test-Path $msdeploy)) {
+            choco install webdeploy -y --no-progress
+          }
+          $server = ($env:WD_SERVER -replace '^https?://', '').TrimEnd('/')
+          $destino = "contentPath=$($env:WD_SITE),computerName=https://$server/msdeploy.axd?site=$($env:WD_SITE),userName=$($env:WD_USER),password=$($env:WD_PASSWORD),authType=Basic"
+          & $msdeploy "-verb:sync" "-source:contentPath=$env:GITHUB_WORKSPACE\publish" "-dest:$destino" "-enableRule:AppOffline" "-allowUntrusted"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
