@@ -72,9 +72,13 @@ public class TareaService : ITareaService
     {
         try
         {
+            _logger.LogInformation("Creando tarea: {Titulo}", tarea.Titulo);
+
             await using var ctx = await _factory.CreateDbContextAsync();
             ctx.Tareas.Add(tarea);
             await ctx.SaveChangesAsync();
+
+            _logger.LogInformation("Tarea creada con Id {Id}", tarea.Id);
             return tarea;
         }
         catch (DbUpdateException ex)
@@ -88,6 +92,8 @@ public class TareaService : ITareaService
     {
         try
         {
+            _logger.LogInformation("Actualizando tarea {Id}", tarea.Id);
+
             await using var ctx = await _factory.CreateDbContextAsync();
 
             // Evita que EF intente reconciliar la categoría vieja con el nuevo CategoriaId
@@ -95,6 +101,8 @@ public class TareaService : ITareaService
 
             ctx.Tareas.Update(tarea);
             await ctx.SaveChangesAsync();
+
+            _logger.LogInformation("Tarea {Id} actualizada", tarea.Id);
             return tarea;
         }
         catch (DbUpdateException ex)
@@ -114,6 +122,11 @@ public class TareaService : ITareaService
             {
                 tarea.Completada = !tarea.Completada;
                 await ctx.SaveChangesAsync();
+                _logger.LogInformation("Tarea {Id} marcada como {Estado}", id, tarea.Completada ? "completada" : "pendiente");
+            }
+            else
+            {
+                _logger.LogWarning("No se pudo cambiar el estado: la tarea {Id} no existe", id);
             }
         }
         catch (DbUpdateException ex)
@@ -133,6 +146,11 @@ public class TareaService : ITareaService
             {
                 ctx.Tareas.Remove(tarea);
                 await ctx.SaveChangesAsync();
+                _logger.LogInformation("Tarea {Id} eliminada", id);
+            }
+            else
+            {
+                _logger.LogWarning("No se pudo eliminar: la tarea {Id} no existe", id);
             }
         }
         catch (DbUpdateException ex)
@@ -157,6 +175,7 @@ public class TareaService : ITareaService
         await using var ctx = await _factory.CreateDbContextAsync();
 
         var porPrioridad = await ctx.Tareas
+            .Where(t => !t.Completada)
             .GroupBy(t => t.Prioridad)
             .Select(g => new { Prioridad = g.Key, Cantidad = g.Count() })
             .ToDictionaryAsync(x => x.Prioridad, x => x.Cantidad);

@@ -1,43 +1,23 @@
 ﻿using GestorTareas.Models;
 
-namespace GestorTareas.Services
+namespace GestorTareas.Services;
+
+/// <summary>
+/// Estado compartido de la aplicación. Se registra como Scoped: una instancia por usuario conectado.
+/// Guarda las últimas estadísticas de tareas y avisa a los componentes suscriptos cuando cambian.
+/// </summary>
+public class TareaStateService
 {
-    public class TareaStateService
+    /// <summary>Últimas estadísticas conocidas, o <c>null</c> si todavía no se cargaron.</summary>
+    public EstadisticasTareas? Estadisticas { get; private set; }
+
+    /// <summary>Se dispara cada vez que cambia el estado, para que los componentes se vuelvan a dibujar.</summary>
+    public event Action? OnChange;
+
+    /// <summary>Guarda las nuevas estadísticas y notifica a los componentes suscriptos.</summary>
+    public void ActualizarEstadisticas(EstadisticasTareas estadisticas)
     {
-        private List<TareaModel> tareas = new()
-    {
-        new() { Id = 1, Titulo = "Entregar TP Blazor", Descripcion = "Terminar el proyecto integrador", Prioridad = "Alta" },
-        new() { Id = 2, Titulo = "Comprar insumos", Descripcion = "Para la semana", Prioridad = "Media" },
-        new() { Id = 3, Titulo = "Estudiar SQL Server", Descripcion = "Repasar joins", Prioridad = "Baja" }
-    };
-
-        private int siguienteId = 4;
-
-        // Evento que avisa a cualquier componente suscripto que los datos cambiaron
-        public event Action? OnChange;
-
-        public List<TareaModel> ObtenerTodas() => tareas;
-
-        public TareaModel? ObtenerPorId(int id) => tareas.FirstOrDefault(t => t.Id == id);
-
-        public void Agregar(TareaModel tarea)
-        {
-            tarea.Id = siguienteId++;
-            tareas.Add(tarea);
-            NotificarCambio();
-        }
-
-        public void Eliminar(int id)
-        {
-            var tarea = ObtenerPorId(id);
-            if (tarea is not null)
-            {
-                tareas.Remove(tarea);
-                NotificarCambio();
-            }
-        }
-
-        private void NotificarCambio() => OnChange?.Invoke();
-
+        Estadisticas = estadisticas;
+        OnChange?.Invoke();
     }
 }

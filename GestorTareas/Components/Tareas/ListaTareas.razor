@@ -3,6 +3,7 @@
 @using GestorTareas.Models
 @using GestorTareas.Services
 @inject ITareaService TareaService
+@inject TareaStateService Estado
 
 <h3>Mis Tareas</h3>
 
@@ -21,7 +22,7 @@
             <div class="border rounded p-2"><strong>@estadisticas.Pendientes</strong><br />Pendientes</div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="border rounded p-2"><strong>@Cantidad("Alta")</strong><br />Prioridad alta</div>
+            <div class="border rounded p-2"><strong>@Cantidad("Alta")</strong><br />Alta pendientes</div>
         </div>
     </div>
 }
@@ -100,6 +101,7 @@ else
             tareas = resultado.Items;
             totalPaginas = resultado.TotalPaginas;
             estadisticas = await TareaService.ObtenerEstadisticas();
+            Estado.ActualizarEstadisticas(estadisticas);
         }
         catch (Exception ex)
         {

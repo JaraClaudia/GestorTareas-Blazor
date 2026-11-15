@@ -1,0 +1,24 @@
+@rendermode InteractiveServer
+@using GestorTareas.Services
+@implements IDisposable
+@inject TareaStateService Estado
+
+@if (Estado.Estadisticas is not null)
+{
+    <div class="d-flex gap-2 small" aria-live="polite">
+        <span class="badge bg-secondary">Total: @Estado.Estadisticas.Total</span>
+        <span class="badge bg-success">Completadas: @Estado.Estadisticas.Completadas</span>
+        <span class="badge bg-warning text-dark">Pendientes: @Estado.Estadisticas.Pendientes</span>
+    </div>
+}
+
+@code {
+    // Nos suscribimos al evento del State Service
+    protected override void OnInitialized() => Estado.OnChange += Actualizar;
+
+    // El evento puede llegar desde otro hilo: InvokeAsync lo lleva al hilo del componente
+    private void Actualizar() => InvokeAsync(StateHasChanged);
+
+    // Nos desuscribimos para no dejar referencias colgadas
+    public void Dispose() => Estado.OnChange -= Actualizar;
+}
