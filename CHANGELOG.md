@@ -9,7 +9,26 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 ### Agregado
 - Pendiente: filtro de tareas por prioridad.
 - Pendiente: modo oscuro con persistencia en localStorage.
-- Pendiente: workflow de CI/CD con GitHub Actions y despliegue en Azure.
+- Pendiente: despliegue automático desde GitHub Actions.
+
+## [0.3.0] - 2026-11-15
+
+### Agregado
+- Despliegue de la aplicación en MonsterASP.NET con base de datos SQL Server, accesible por HTTPS.
+- Workflow de integración continua con GitHub Actions: restore, build y publish en cada push y Pull Request.
+- Configuración por ambiente: `appsettings.Production.json` y User Secrets para desarrollo.
+- Endpoint de salud `/health` con un chequeo propio de la conexión a la base de datos.
+- Registro de operaciones de escritura con `ILogger` (información, advertencias y errores).
+- Componente `EstadisticasEncabezado` que se actualiza solo mediante el State Service y su evento `OnChange`.
+- Enlace "Tareas" en el menú y página de inicio propia.
+
+### Cambiado
+- `TareaStateService` pasó de guardar una lista de tareas en memoria a compartir las estadísticas entre componentes.
+- Los layouts usan HTML5 semántico (`header`, `aside`, `nav`, `main`, `article`, `footer`).
+- El menú quedó solo con las secciones de la aplicación.
+
+### Corregido
+- La estadística de prioridad alta ahora cuenta solo las tareas pendientes, y baja al completar una.
 
 ## [0.2.0] - 2026-11-13
 
@@ -36,6 +55,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 - Servicio de datos `TareaService` con `IDbContextFactory`, paginación, búsqueda por título y estadísticas.
 - Manejo de errores de base de datos con registro en el log y mensajes visibles en la interfaz.
 
-[Sin publicar]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.2.0...develop
+[Sin publicar]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.3.0...develop
+[0.3.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/releases/tag/v0.1.0
