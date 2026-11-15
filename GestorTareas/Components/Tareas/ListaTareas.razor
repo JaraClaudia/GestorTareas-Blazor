@@ -3,6 +3,7 @@
 @using GestorTareas.Models
 @using GestorTareas.Services
 @inject ITareaService TareaService
+@inject TareaStateService Estado
 
 <h3>Mis Tareas</h3>
 
@@ -100,6 +101,7 @@ else
             tareas = resultado.Items;
             totalPaginas = resultado.TotalPaginas;
             estadisticas = await TareaService.ObtenerEstadisticas();
+            Estado.ActualizarEstadisticas(estadisticas);
         }
         catch (Exception ex)
         {
