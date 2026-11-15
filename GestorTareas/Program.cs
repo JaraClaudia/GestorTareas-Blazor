@@ -11,6 +11,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContextFactory<TareasDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<ITareaService, TareaService>();
+builder.Services.AddScoped<TareaStateService>();
 
 // NUEVO: registra el health check de la base de datos
 builder.Services.AddHealthChecks()
