@@ -60,7 +60,7 @@ public interface ITareaService
     Task<List<Categoria>> ObtenerCategorias();
 
     /// <summary>
-    /// Calcula las estadísticas de las tareas (total, completadas y cantidad por prioridad)
+    /// Calcula las estadísticas de las tareas (total, completadas y cantidad de pendientes por prioridad)
     /// con consultas a la base de datos.
     /// </summary>
     /// <returns>Un objeto <see cref="EstadisticasTareas"/> con los conteos.</returns>
