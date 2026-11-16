@@ -41,6 +41,7 @@ jobs:
             choco install webdeploy -y --no-progress
           }
           $server = ($env:WD_SERVER -replace '^https?://', '').TrimEnd('/')
+          if ($server -notmatch ':\d+$') { $server = "${server}:8172" }
           $destino = "contentPath=$($env:WD_SITE),computerName=https://$server/msdeploy.axd?site=$($env:WD_SITE),userName=$($env:WD_USER),password=$($env:WD_PASSWORD),authType=Basic"
           & $msdeploy "-verb:sync" "-source:contentPath=$env:GITHUB_WORKSPACE\publish" "-dest:$destino" "-enableRule:AppOffline" "-allowUntrusted"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
