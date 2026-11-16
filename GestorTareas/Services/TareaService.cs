@@ -175,6 +175,7 @@ public class TareaService : ITareaService
         await using var ctx = await _factory.CreateDbContextAsync();
 
         var porPrioridad = await ctx.Tareas
+            .Where(t => !t.Completada)
             .GroupBy(t => t.Prioridad)
             .Select(g => new { Prioridad = g.Key, Cantidad = g.Count() })
             .ToDictionaryAsync(x => x.Prioridad, x => x.Cantidad);
