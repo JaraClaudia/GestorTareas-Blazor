@@ -9,7 +9,18 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 ### Agregado
 - Pendiente: filtro de tareas por prioridad.
 - Pendiente: modo oscuro con persistencia en localStorage.
-- Pendiente: despliegue automático desde GitHub Actions.
+
+## [0.4.0] - 2026-11-15
+
+### Agregado
+- Workflow `deploy.yml` de GitHub Actions: despliegue automático al hosting con Web Deploy cada vez que llega código a `main`, con ejecución manual opcional.
+- Credenciales de despliegue guardadas como secretos de GitHub, fuera del repositorio.
+
+### Corregido
+- El despliegue agrega el puerto 8172 de Web Deploy cuando el servidor del perfil de publicación no lo trae.
+
+### Cambiado
+- README: la sección de despliegue describe el flujo automático.
 
 ## [0.3.0] - 2026-11-15
 
@@ -55,7 +66,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 - Servicio de datos `TareaService` con `IDbContextFactory`, paginación, búsqueda por título y estadísticas.
 - Manejo de errores de base de datos con registro en el log y mensajes visibles en la interfaz.
 
-[Sin publicar]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.3.0...develop
+[Sin publicar]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.4.0...develop
+[0.4.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/JaraClaudia/GestorTareas-Blazor/releases/tag/v0.1.0
