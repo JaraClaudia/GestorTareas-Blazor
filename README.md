@@ -33,7 +33,7 @@ Aplicación web para gestionar tareas personales, construida con **Blazor Web Ap
 | Datos | Entity Framework Core 8, SQL Server (LocalDB en desarrollo) |
 | JavaScript | JS Interop con módulo en `wwwroot/js/confirmaciones.js` |
 | Control de versiones | Git, GitHub, Git Flow, Conventional Commits |
-| Integración continua | GitHub Actions (restore, build y publish en cada push y Pull Request) |
+| CI/CD | GitHub Actions: integración continua en cada push y Pull Request, y despliegue automático al llegar código a `main` |
 | Hosting | MonsterASP.NET (plan gratuito) con base de datos SQL Server |
 
 ## Arquitectura
@@ -92,7 +92,11 @@ Para desarrollo también se pueden usar User Secrets (`dotnet user-secrets`).
 
 ## Despliegue
 
-La aplicación se publica en MonsterASP.NET con Web Deploy desde Visual Studio. El workflow de GitHub Actions (`.github/workflows/ci.yml`) restaura, compila y publica el proyecto en cada push y Pull Request hacia `main` y `develop`. El despliegue automático desde el workflow todavía no está configurado.
+El despliegue es automático. Cada vez que llega código a `main`, el workflow `.github/workflows/deploy.yml` restaura, compila y publica el proyecto en un servidor Windows de GitHub y lo sube al hosting con Web Deploy (`msdeploy`). También se puede ejecutar a mano desde la pestaña Actions.
+
+Las credenciales de despliegue no están en el repositorio: se guardan como secretos de GitHub (`PUBLISHURL`, `MSDEPLOYSITE`, `USERNAME` y `USERPWD`).
+
+La integración continua (`.github/workflows/ci.yml`) restaura, compila y publica el proyecto en cada push y Pull Request hacia `main` y `develop`.
 
 ## Flujo de trabajo
 
@@ -107,7 +111,6 @@ La aplicación se publica en MonsterASP.NET con Web Deploy desde Visual Studio. 
 - Filtro de tareas por prioridad.
 - Modo oscuro con persistencia en localStorage.
 - Notificaciones de tareas por vencer.
-- Despliegue automático desde GitHub Actions.
 
 ## Autora
 
